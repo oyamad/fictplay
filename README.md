@@ -1,0 +1,4 @@
+fictplay
+========
+
+Simulating fictitious play
