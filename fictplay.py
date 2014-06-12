@@ -83,8 +83,8 @@ if __name__ == "__main__":
     # g = NormalFormGame_2P(COORDINATION_GAME)
     players = FictitiousPlayUpdatingPlayers(g)
 
-    players.init_beliefs()
     belief_seqs = [[], []]
+    players.init_beliefs()
 
     for t in range(T):
         for player in players.players:
