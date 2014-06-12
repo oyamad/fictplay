@@ -84,16 +84,17 @@ if __name__ == "__main__":
     players = FictitiousPlayUpdatingPlayers(g)
 
     players.init_beliefs()
-    beliefs_seq = []
+    belief_seqs = [[], []]
 
     for t in range(T):
-        beliefs_seq.append([belief[1] for belief in players.current_beliefs])
+        for player in players.players:
+            belief_seqs[player].append(players.current_beliefs[player][1])
         players.play()
         players.update_beliefs(t)
 
     fig, ax = plt.subplots()
     colors = ['b-', 'g-']
     for player, color in zip(players.players, colors):
-        ax.plot([x[player] for x in beliefs_seq], color, linewidth=2)
+        ax.plot(belief_seqs[player], color, linewidth=2)
     ax.set_ylim(0, 1)
     plt.show()
