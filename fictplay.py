@@ -1,5 +1,4 @@
 from __future__ import division
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -70,7 +69,18 @@ class FictitiousPlayUpdatingPlayers(Players):
             ]
 
 
-if __name__ == "__main__":
+class FictitiousPlay:
+    def __init__(self, players):
+        players.init_beliefs()
+
+    def __call__(self, num_ts):
+        for t in range(num_ts):
+            yield players.current_beliefs
+            players.play()
+            players.update_beliefs(t)
+
+
+def main():
     MATCHING_PENNIES = [[( 1, -1), (-1,  1)],
                         [(-1,  1), ( 1, -1)]]
 
@@ -83,18 +93,18 @@ if __name__ == "__main__":
     # g = NormalFormGame_2P(COORDINATION_GAME)
     players = FictitiousPlayUpdatingPlayers(g)
 
-    belief_seqs = [[], []]
-    players.init_beliefs()
+    fp = FictitiousPlay(players)
 
-    for t in range(T):
-        for player in players.players:
-            belief_seqs[player].append(players.current_beliefs[player][1])
-        players.play()
-        players.update_beliefs(t)
-
+    belief_seqs = [[beliefs[player][1] for player in players.players] for beliefs in fp(T)]
+    
     fig, ax = plt.subplots()
-    colors = ['b-', 'g-']
-    for player, color in zip(players.players, colors):
-        ax.plot(belief_seqs[player], color, linewidth=2)
+    ax.set_color_cycle(['b', 'g'])
+    ax.plot(belief_seqs, linewidth=2)
     ax.set_ylim(0, 1)
     plt.show()
+
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
+    main()
