@@ -71,13 +71,14 @@ class FictitiousPlayUpdatingPlayers(Players):
 
 class FictitiousPlay:
     def __init__(self, players):
-        players.init_beliefs()
+        self.players = players
 
     def __call__(self, num_ts):
+        self.players.init_beliefs()
         for t in range(num_ts):
-            yield players.current_beliefs
-            players.play()
-            players.update_beliefs(t)
+            yield self.players.current_beliefs
+            self.players.play()
+            self.players.update_beliefs(t)
 
 
 def main():
@@ -95,8 +96,9 @@ def main():
 
     fp = FictitiousPlay(players)
 
-    belief_seqs = [[beliefs[player][1] for player in players.players] for beliefs in fp(T)]
-    
+    belief_seqs = [[beliefs[player][1] for player in players.players]
+                   for beliefs in fp(T)]
+
     fig, ax = plt.subplots()
     ax.set_color_cycle(['b', 'g'])
     ax.plot(belief_seqs, linewidth=2)
