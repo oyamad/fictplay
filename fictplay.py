@@ -26,6 +26,13 @@ def br_corr(mixed_str, payoff_mat):
     return [i for i, value in enumerate(vec) if value == vec.max()]
 
 
+def random_choice(actions):
+    if len(actions) == 1:
+        return actions[0]
+    else:
+        return np.random.choice(actions)
+
+
 def pure2mixed(size, index):
     vec = np.zeros(size)
     vec[index] = 1.0
@@ -48,7 +55,7 @@ class Players:
 
     def play(self):
         actions = [
-            np.random.choice(
+            random_choice(
                 br_corr(self.current_beliefs[player], self.matrices[player])
                 )
             for player in self.players
@@ -88,7 +95,9 @@ def main():
     COORDINATION_GAME = [[4, 0],
                          [3, 2]]
 
-    T = 5000
+    T = 500
+    TRIALS = 100
+    num_bins = 10
 
     g = NormalFormGame_2P(MATCHING_PENNIES)
     # g = NormalFormGame_2P(COORDINATION_GAME)
@@ -96,14 +105,26 @@ def main():
 
     fp = FictitiousPlay(players)
 
-    belief_seqs = [[beliefs[player][1] for player in players.players]
-                   for beliefs in fp(T)]
+    if TRIALS <= 1:  # Plot a pair of trajectories of beliefs up to T-1
+        belief_seqs = [[beliefs[player][1] for player in players.players]
+                       for beliefs in fp(T)]
 
-    fig, ax = plt.subplots()
-    ax.set_color_cycle(['b', 'g'])
-    ax.plot(belief_seqs, linewidth=2)
-    ax.set_ylim(0, 1)
-    plt.show()
+        fig, ax = plt.subplots()
+        ax.set_color_cycle(['b', 'g'])
+        ax.plot(belief_seqs, linewidth=2)
+        ax.set_ylim(0, 1)
+        plt.show()
+
+    else:  # Draw a histogram of TRIALS samples of beliefs at T-1
+        samples = []
+        for i in range(TRIALS):
+            samples.append(list(fp(T))[-1][0][1])
+
+        fig, ax = plt.subplots()
+        ax.hist(samples, bins=num_bins)
+        ax.set_xlim(xmin=0, xmax=1)
+        ax.set_xticks([n/10 for n in range(11)])
+        plt.show()
 
 
 if __name__ == '__main__':
