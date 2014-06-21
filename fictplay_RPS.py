@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from fictplay import *
 
 SAVEFILE = True
-FILNENAME_BASE = 'fictplay_RSP'
+FILNENAME_BASE = 'fictplay_RPS'
 # FILEFORMATS = ('png', 'svg', 'pdf')
 FILEFORMAT = 'png'
 
